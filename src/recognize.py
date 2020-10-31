@@ -5,15 +5,12 @@ import cv2
 import numpy as np
 
 
-
-
 class PageRecognizer(object):
 
     def __init__(self, recognizer, preprocess=None, ocr_model=None):
         self.recognizer = recognizer
         self.ocr_model = ocr_model
         self.preprocess = preprocess
-
 
     def get_min_rect(self, points):
         f_y = [v[0] for v in points]
@@ -38,7 +35,6 @@ class PageRecognizer(object):
         
         return bounds
 
-
     @staticmethod
     def draw_bounds(image, bounds, color='yellow', width=2):
 
@@ -51,7 +47,6 @@ class PageRecognizer(object):
 
         return pil_image
 
-    
 
 class OcrModel(object):
 
@@ -60,6 +55,7 @@ class OcrModel(object):
 
     def recoginze(self) -> str:
         pass
+
 
 class Recognizer(object):
 
