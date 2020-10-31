@@ -25,9 +25,10 @@ class DocumentDescription:
 
 
 class DocumentField:
-    def __init__(self, name, rus_name):
+    def __init__(self, name, rus_name, proj_fact=False):
         self.name = name
         self.rus_name = rus_name
+        self.proj_fact = proj_fact
 
 
 list_of_documents = [
@@ -104,20 +105,24 @@ list_of_documents = [
                 rus_name='Строительный адрес',
             ),
             DocumentField(
-                name='volume_proj_fact',
+                name='building_volume',
                 rus_name='Строительный объем – всего (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='volume_proj_fact_include_on_ground',
+                name='volume_include_on_ground',
                 rus_name='В том числе надземной части (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
                 name='full_square',
                 rus_name='Общая площадь - (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='square_buildings_proj_fact',
-                rus_name='Площадь встроенно-пристроенных помещений (по проекту,фактически)',
+                name='square_buildings',
+                rus_name='Площадь встроенно-пристроенных помещений (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
                 name='count_buildings',
@@ -126,7 +131,7 @@ list_of_documents = [
         ]
     ),
     DocumentDescription(
-        name=' building_permission_capital',
+        name='building_permission_capital',
         rus_name='Разрешение на ввод Объекта капитального строительства',
         fields=[
             DocumentField(
@@ -134,36 +139,44 @@ list_of_documents = [
                 rus_name='Объекты непроизводственного назначения',
             ),
             DocumentField(
-                name='number_proj_fact',
+                name='number_places',
                 rus_name='Количество мест (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='number_visits_proj_fact',
+                name='number_visits',
                 rus_name='Количество посещений (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='capacity_volume_proj_fact',
+                name='capacity',
                 rus_name='Вместимость (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
                 name='full_square_parking',
                 rus_name='Общая площадь подземной автостоянки (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='square_admin_buildings_proj_fact',
+                name='square_admin_buildings',
                 rus_name='Общая площадь административных помещений (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='square_culture_buildings_proj_fact',
+                name='square_culture_buildings',
                 rus_name='Общая площадь помещений культурно-досугового назначения (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
                 name='count_buildings',
                 rus_name='Торговая площадь (по проекту, фактически)',
+                proj_fact=True,
             ),
             DocumentField(
-                name='count_buildings',
+                name='level_buildings',
                 rus_name='Этажность (по проекту, фактически)',
+                proj_fact=True,
             ),
         ]
     ),
