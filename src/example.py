@@ -10,12 +10,12 @@ def image_preprocess(image):
     return image
 
 
-image = cv2.imread("/content/pdf2image/ЗУ/М-01-256863 30.04.2003 исправленное.pdf/3.jpg")
+image = cv2.imread("../test_images/test.jpg")
 
 image = cv2.resize(image, (image.shape[1] * 2, image.shape[0] * 2))
 
 
-reader = easyocr.Reader(['ru','ru'])
+reader = easyocr.Reader(['ru', 'ru'])
 
 rec = Recognizer(reader, {'paragraph': False})
 
