@@ -28,9 +28,7 @@ class PageRecognizer(object):
             for bound in bounds:
                 points = bound[0]
                 y_v, x_v = self.get_min_rect(points)
-
                 crop = image[y_v[0]:y_v[1], x_v[0]:x_v[1]]
-
                 bound[1] = self.ocr_model.recognize(crop)
         
         return bounds
