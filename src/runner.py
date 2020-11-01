@@ -8,16 +8,12 @@ import os
 
 #GLOBAL_QUERY = None
 
-def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
-  #global GLOBAL_QUERY
-  #GLOBAL_QUERY = 'название документа'
+def init_app(pipeline, template_folder='prolog_game'):
   app = Flask(__name__, template_folder=template_folder)
 
   app.config['SECRET_KEY'] = 'kj'
 
-  pipeline = Pipeline(cls_model_path=cls_model_path, credential_path=credential_path)
-
-  @app.route('/',methods = ['GET', 'POST'])
+  @app.route('/', methods=['GET', 'POST'])
   def index():
     #global GLOBAL_QUERY
     if request.method == 'POST':
@@ -33,7 +29,6 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
         path = filename
         img.save(path)
         nim = Image.open(path)
-        global pipeline
         result = pipeline.predict(nim, query='тип документа')
         return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=None)
       else:
