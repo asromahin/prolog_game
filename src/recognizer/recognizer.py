@@ -1,25 +1,9 @@
 import io
-import os
 
 from google.cloud import vision
 from google.cloud.vision_v1 import types
 
-from google.oauth2 import service_account
-
-from path import Path
-from glob import glob
-from google.colab.patches import cv2_imshow
-
 import cv2
-import pandas as pd
-
-from tqdm import tqdm_notebook
-
-import cv2
-import matplotlib.pyplot as plt
-import easyocr
-from tqdm.notebook import tqdm
-import pandas as pd
 from PIL import Image, ImageDraw
 
 from google.oauth2 import service_account
