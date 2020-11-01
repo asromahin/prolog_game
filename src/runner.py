@@ -6,8 +6,7 @@ from flask import render_template, send_file
 from PIL import Image
 import os
 
-def init_app(cls_model_path, credential_path, project_name='prolog_game'):
-  template_folder = os.path.join(project_name, 'templates')
+def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
   app = Flask(__name__, template_folder=template_folder)
 
   app.config['SECRET_KEY'] = 'kj'
