@@ -28,6 +28,7 @@ class Pipeline:
 
     def predict(self, image, query='тип документа'):
         res = ResultPipeline()
+        print(np.array(image).shape)
         res['type'] = self.classification.predict(image)
         res['bounds'] = self.recognize.predict(np.array(image))
         res['full_text'] = extract_all_text(res['bounds'])
