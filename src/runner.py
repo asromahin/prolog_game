@@ -22,9 +22,10 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
       text = request.form.get('text')
       print(text)
       if text is not None:
-
+        global GLOBAL_QUERY
         GLOBAL_QUERY = text
       if img is not None:
+        global GLOBAL_QUERY
         filename = img.filename
         path = filename
         img.save(path)
@@ -32,6 +33,7 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
         result = pipeline.predict(nim, query=GLOBAL_QUERY)
         return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=GLOBAL_QUERY)
       else:
+        global GLOBAL_QUERY
         return render_template('index.html', uploaded_img_name=None, result=None, global_query=GLOBAL_QUERY)
 
     elif request.method == 'GET':
