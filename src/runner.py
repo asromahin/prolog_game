@@ -8,16 +8,12 @@ import os
 
 #GLOBAL_QUERY = None
 
-def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
-  #global GLOBAL_QUERY
-  #GLOBAL_QUERY = 'название документа'
+def init_app(pipeline, template_folder='prolog_game'):
   app = Flask(__name__, template_folder=template_folder)
 
   app.config['SECRET_KEY'] = 'kj'
 
-  pipeline = Pipeline(cls_model_path=cls_model_path, credential_path=credential_path)
-
-  @app.route('/',methods = ['GET', 'POST'])
+  @app.route('/', methods=['GET', 'POST'])
   def index():
     #global GLOBAL_QUERY
     if request.method == 'POST':
@@ -30,10 +26,11 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
       if img is not None:
         #global GLOBAL_QUERY
         filename = img.filename
+        print(filename)
         path = filename
         img.save(path)
         nim = Image.open(path)
-        global pipeline
+        nim = nim.convert('RGB')
         result = pipeline.predict(nim, query='тип документа')
         return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=None)
       else:
@@ -42,10 +39,10 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
     elif request.method == 'GET':
       return render_template('index.html', uploaded_img_name=None, result=None, global_query=None)
 
-
-  @app.route('/images/<filename>',methods = ['GET'])
+  @app.route('/images/<filename>', methods=['GET'])
   def images(filename):
     print('send here')
+    print(filename)
     return send_file(filename)
   run_with_ngrok(app)   #starts ngrok when the app is run
   app.run()
