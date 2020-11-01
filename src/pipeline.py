@@ -35,7 +35,7 @@ class Pipeline:
         #res['type'], res['titul'] = self.classification.predict(image)
         res['type'] = self.classification.predict(image)
         res['bounds'] = self.recognize.predict(np.array(image))
-        res['fields'] = self.key_rec.predict(res['bounds'], image, 0)
+        res['fields'] = self.key_rec.predict(res['bounds'], image, res['type'])
         res['full_text'] = extract_all_text(res['bounds'])
         res['ner_result'] = self.ner.predict(res['full_text'], query)
         return res

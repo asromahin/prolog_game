@@ -26,7 +26,7 @@ class KeyRecognize:
     def __init__(self, seg_model_path):
         self.model = torch.load(seg_model_path, map_location='cuda:0')
 
-    def predict(self, bounds, input_image, doc_ind):
+    def predict(self, bounds, input_image, doc_type):
         df = pd.DataFrame()
 
         for b in bounds:
@@ -84,7 +84,9 @@ class KeyRecognize:
 
         df['class'] = class_arr
 
-        document = list_of_documents[doc_ind]
+        for l in list_of_documents:
+            if l.rus_name==doc_type:
+                document = l
 
         found_fields = dict()
         for f in document.fields[4:]:

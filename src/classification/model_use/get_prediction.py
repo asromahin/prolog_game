@@ -24,7 +24,13 @@ class ClassificationModel:
         return predicted_idx#, predicted_titul_idx
 
     def predict(self,  image):
-        image_with_tags = {0: 'БТИ', 1: 'ЗУ', 2: 'Разр. на ввод', 3: 'Разр. на стр-во', 4: 'Свид. АГР'}
+        image_with_tags = {
+            0: 'Технический паспорт',
+            1: 'Договор аренды земного участка',
+            2: 'Разрешение на ввод Объекта капитального строительства',
+            3: 'Разрешение на строительство',
+            4: 'Свидетельство об утверждении архитектурно-градостроительного решения'
+        }
         titul_with_tags = {0: 'no_titul', 1: 'titul'}
         #idx, titul_idx = self.get_category(image=image)
         idx = self.get_category(image=image)
