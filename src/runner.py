@@ -26,7 +26,8 @@ def init_app(pipeline, template_folder='prolog_game'):
       if img is not None:
         #global GLOBAL_QUERY
         filename = img.filename
-        path = os.path.join('/'.join(template_folder.split('/')[:-1]), filename)
+        print(filename)
+        path = filename
         img.save(path)
         nim = Image.open(path)
         nim = nim.convert('RGB')
