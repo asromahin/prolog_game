@@ -4,7 +4,7 @@ import torch
 
 class ClassificationModel:
     def __init__(self, model_path='../model_pt/mobilenet_v2_0.9873.pt'):
-        self.model = torch.load(model_path)
+        self.model = torch.load(model_path).to('cpu')
 
     def transform_image(self, image):
         my_transforms = transforms.Compose([transforms.Resize(512),
