@@ -25,7 +25,7 @@ class Fscore(base.Metric):
 
 
 class Accuracy(base.Metric):
-    __name__ = 'clf_document'
+    __name__ = 'Accuracy'
 
     def __init__(self, threshold=0, activation=None, ignore_channels=None, **kwargs):
         super().__init__(**kwargs)

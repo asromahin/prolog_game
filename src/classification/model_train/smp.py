@@ -1,10 +1,11 @@
 import sys
-import torch
-from tqdm import tqdm as tqdm
-# import apex
-from torch import nn
 
 import numpy as np
+import torch
+from tqdm import tqdm as tqdm
+
+
+# import apex
 
 
 class Meter(object):
@@ -183,12 +184,11 @@ class ValidEpoch(Epoch):
         return loss, prediction
 
 
-from losses import FocalLoss
 
 
 class TrainEpochCustom(Epoch):
 
-    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True, cls_w_1=1, cls_w_2=3, seg_w=1, use_distil=False):
+    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True, cls_w_1=1, cls_w_2=2, seg_w=1, use_distil=False):
         super().__init__(
             model=model,
             loss=loss,
@@ -214,13 +214,15 @@ class TrainEpochCustom(Epoch):
         logs = {}
         loss_meter = AverageValueMeter()
         metrics_meters = {metric.__name__: AverageValueMeter() for metric in self.metrics if metric.__name__ != 'accuracy'}
-        metrics_meters['clf_document'] = AverageValueMeter()
+        metrics_meters['acc_document'] = AverageValueMeter()
+        metrics_meters['acc_titul'] = AverageValueMeter()
+
 
         with tqdm(dataloader, desc=self.stage_name, file=sys.stdout, disable=not self.verbose) as iterator:
-            for x, y, filename in iterator:
-                x, y = x.to(self.device), y.to(self.device)
+            for x, y, filename, titul in iterator:
+                x, y, titul = x.to(self.device), y.to(self.device), titul.to(self.device)
 
-                loss, y_pred_clf_1 = self.batch_update(x, y)
+                loss, y_pred_clf_1, titul_pred = self.batch_update(x, y, titul)
                 # update loss logs
                 loss_value = loss.cpu().detach().numpy()
                 loss_meter.add(loss_value)
@@ -229,9 +231,15 @@ class TrainEpochCustom(Epoch):
 
                 # update metrics logs
                 for metric_fn in self.metrics:
-                    #if metric_fn.__name__ == 'clf_document':
-                    metric_value = metric_fn(y_pred_clf_1, y).cpu().detach().numpy()
-                    metrics_meters[metric_fn.__name__].add(metric_value)
+                    if metric_fn.__name__ == 'Accuracy':
+                        metric_value = metric_fn(y_pred_clf_1, y).cpu().detach().numpy()
+                        metrics_meters['acc_document'].add(metric_value)
+                        metric_value = metric_fn(titul_pred, titul).cpu().detach().numpy()
+                        metrics_meters['acc_titul'].add(metric_value)
+                    else:
+                        metric_value = metric_fn(y_pred_clf_1, y).cpu().detach().numpy()
+                        metrics_meters[metric_fn.__name__].add(metric_value)
+
 
                 metrics_logs = {k: v.mean for k, v in metrics_meters.items()}
                 logs.update(metrics_logs)
@@ -245,13 +253,13 @@ class TrainEpochCustom(Epoch):
     def on_epoch_start(self):
         self.model.train()
 
-    def batch_update(self, x, y_clf_1):
+    def batch_update(self, x, y_clf_1, titul):
         self.optimizer.zero_grad()
-        prediction_clf_1 = self.model.forward(x)
-        loss = self.loss_clf(prediction_clf_1,y_clf_1) * self.cls_w_1
+        prediction_clf_1, titul_pred = self.model.forward(x)
+        loss = self.loss_clf(prediction_clf_1,y_clf_1) * self.cls_w_1 + self.loss_clf(prediction_clf_1,y_clf_1) * self.cls_w_2
         loss.backward()
         self.optimizer.step()
-        return loss, prediction_clf_1
+        return loss, prediction_clf_1, titul_pred
 
 
 from constants import DOCNAME2CLASS, BACKDOCNAME2CLASS
@@ -260,8 +268,9 @@ from constants import DOCNAME2CLASS, BACKDOCNAME2CLASS
 def dict_metric():
     def metric_m():
         metrics_meters = {'Fscore': AverageValueMeter(),
-                          'clf_document': AverageValueMeter(),
-                          'clf_quality': AverageValueMeter()}
+                          'acc_document': AverageValueMeter(),
+                          'acc_titul': AverageValueMeter(),
+                           'clf_quality': AverageValueMeter(),}
         return metrics_meters
 
     keys_dict = list(DOCNAME2CLASS.keys())
@@ -272,7 +281,7 @@ def dict_metric():
 
 class ValidEpochCustomTabl(Epoch):
 
-    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True, cls_w_1=1, cls_w_2=3, seg_w=1,
+    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True, cls_w_1=1, cls_w_2=2, seg_w=1,
                  use_distil=False):
         super().__init__(
             model=model,
@@ -287,7 +296,6 @@ class ValidEpochCustomTabl(Epoch):
         self.cls_w_2 = cls_w_2
         self.seg_w = seg_w
         self.optimizer = optimizer
-        # self.loss_clf = FocalLoss() # nn.BCEWithLogitsLoss()
         self.loss_clf = loss
         self.use_distil = use_distil
 
@@ -300,12 +308,14 @@ class ValidEpochCustomTabl(Epoch):
         logs = {}
         loss_meter = AverageValueMeter()
         metrics_meters = {metric.__name__: AverageValueMeter() for metric in self.metrics if metric.__name__ != 'accuracy'}
-        metrics_meters['clf_document'] = AverageValueMeter()
+        metrics_meters['acc_document'] = AverageValueMeter()
+        metrics_meters['acc_titul'] = AverageValueMeter()
+
 
         with tqdm(valid_loader, desc=self.stage_name, file=sys.stdout, disable=not (self.verbose)) as iterator:
-            for imgs, y_all, filename in iterator:
-                imgs, y_class= imgs.to(device), y_all.to(device)
-                loss, preds_clf_1 = self.batch_update(imgs, y_class)
+            for imgs, y_all, filename, titul in iterator:
+                imgs, y_class, titul= imgs.to(device), y_all.to(device), titul.to(device)
+                loss, preds_clf_1, titul_pred = self.batch_update(imgs, y_class, titul)
                 # update loss logs
                 loss_value = loss.cpu().detach().numpy()
                 loss_meter.add(loss_value)
@@ -313,16 +323,27 @@ class ValidEpochCustomTabl(Epoch):
                 logs.update(loss_logs)
 
                 metrics_meters, metric_value = self.update_batch_metrics(metrics_meters,
-                                                                         y_class, preds_clf_1)
+                                                                         y_class, preds_clf_1,
+                                                                         titul, titul_pred)
                 metrics_logs = {k: v.mean for k, v in metrics_meters.items()}
                 logs.update(metrics_logs)
 
-                for pred_clf_1, y_clas in zip(preds_clf_1, y_class):
+                for pred_clf_1, y_clas, tit_pred, tit in zip(preds_clf_1, y_class, titul_pred, titul):
                     # update table metrics
                     class_str = self.class_to_str(y_clas.cpu().detach())
+
                     for metric_fn in self.metrics:
-                        metric_value = metric_fn(pred_clf_1.unsqueeze(0), y_clas.unsqueeze(0)).cpu().detach().numpy()
-                        dict_value[class_str][metric_fn.__name__].add(metric_value)
+                        if metric_fn.__name__ == 'Accuracy':
+                            metric_value = metric_fn(pred_clf_1.unsqueeze(0), y_clas.unsqueeze(0)).cpu().detach().numpy()
+                            #metrics_meters['acc_document'].add(metric_value)
+                            dict_value[class_str]['acc_document'].add(metric_value)
+                            metric_value = metric_fn(tit_pred.unsqueeze(0), tit.unsqueeze(0)).cpu().detach().numpy()
+                            dict_value[class_str]['acc_titul'].add(metric_value)
+                            #metrics_meters['acc_titul'].add(metric_value)
+                        else:
+                            metric_value = metric_fn(pred_clf_1.unsqueeze(0), y_clas.unsqueeze(0)).cpu().detach().numpy()
+                            dict_value[class_str][metric_fn.__name__].add(metric_value)
+                            #metrics_meters[metric_fn.__name__].add(metric_value)
 
                     if self.verbose:
                         s = self._format_logs(logs)
@@ -336,26 +357,30 @@ class ValidEpochCustomTabl(Epoch):
         name = [BACKDOCNAME2CLASS[int(self.b @ index_list)]]
         return name[0]
 
-    def update_batch_metrics(self, metrics_meters, y, y_pred_clf_1):
+    def update_batch_metrics(self, metrics_meters, y, y_pred_clf_1, titul, titul_pred):
         for metric_fn in self.metrics:
-            #if metric_fn.__name__ == 'clf_document':
-            metric_value = metric_fn(y_pred_clf_1.cpu().detach(), y.cpu().detach())
-            metrics_meters[metric_fn.__name__].add(metric_value)
+            if metric_fn.__name__ == 'Accuracy':
+                metric_value = metric_fn(y_pred_clf_1, y).cpu().detach().numpy()
+                metrics_meters['acc_document'].add(metric_value)
+                metric_value = metric_fn(titul_pred, titul).cpu().detach().numpy()
+                metrics_meters['acc_titul'].add(metric_value)
+            else:
+                metric_value = metric_fn(y_pred_clf_1, y).cpu().detach().numpy()
+                metrics_meters[metric_fn.__name__].add(metric_value)
 
         return metrics_meters, metric_value
 
-    def batch_update(self, x, y):
+    def batch_update(self, x, y_clf_1, titul):
         self.optimizer.zero_grad()
         with torch.set_grad_enabled(False):
-            prediction_clf_1 = self.model.forward(x)
-        y_clf_1 = y
-        loss = self.loss_clf(prediction_clf_1, y_clf_1) * self.cls_w_1
-        return loss, prediction_clf_1
+            prediction_clf_1, titul_pred = self.model.forward(x)
+        loss = self.loss_clf(prediction_clf_1, y_clf_1) * self.cls_w_1 + self.loss_clf(titul_pred, titul) * self.cls_w_2
+        return loss, prediction_clf_1, titul_pred
 
 
 class TestEpochCustom(Epoch):
 
-    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True, cls_w_1=1, cls_w_2=3, seg_w=1,
+    def __init__(self, model, loss, metrics, optimizer, device='cpu', verbose=True, cls_w_1=1, cls_w_2=2, seg_w=1,
                  use_distil=False):
         super().__init__(
             model=model,
@@ -386,7 +411,7 @@ class TestEpochCustom(Epoch):
         logs = {}
         loss_meter = AverageValueMeter()
         metrics_meters = {metric.__name__: AverageValueMeter() for metric in self.metrics if metric.__name__ != 'accuracy'}
-        metrics_meters['clf_document'] = AverageValueMeter()
+        metrics_meters['acc_document'] = AverageValueMeter()
 
         with tqdm(valid_loader, desc=self.stage_name, file=sys.stdout, disable=not (self.verbose)) as iterator:
             for imgs, y_all, filename in iterator:
@@ -449,7 +474,7 @@ class TestEpochCustom(Epoch):
 
     def update_batch_metrics(self, metrics_meters, y, y_pred_clf_1):
         for metric_fn in self.metrics:
-            #if metric_fn.__name__ == 'clf_document':
+            #if metric_fn.__name__ == 'acc_document':
             metric_value = metric_fn(y_pred_clf_1.cpu().detach(), y.cpu().detach())
             metrics_meters[metric_fn.__name__].add(metric_value)
 

@@ -1,19 +1,16 @@
 import torch
-from torchvision import models
-from torchsummary import summary
-from torchvision.transforms import ToTensor
 import numpy as np
-from prolog_game.src.classification.model_use import get_prediction
-from prolog_game.src.docs.DocumentDescription import list_of_documents
-from PIL import Image
+from src.docs.DocumentDescription import list_of_documents
 from fuzzywuzzy import fuzz
-
+import pandas as pd
+import cv2
 
 
 def get_min_rect(points):
     f_y = list(map(int, [v[0] for v in points]))
     f_x = list(map(int, [v[1] for v in points]))
     return [min(f_x), max(f_x)], [min(f_y), max(f_y)]
+
 
 def get_center(points):
 
@@ -24,138 +21,106 @@ def get_center(points):
 
     return np.array([c_x, c_y])
 
-def draw_bounds(image, df, colors, width=2):
 
-    pil_image = Image.fromarray(image)
+class KeyRecognize:
+    def __init__(self, seg_model_path):
+        self.model = torch.load(seg_model_path, map_location='cuda:0')
 
-    draw = ImageDraw.Draw(pil_image)
+    def predict(self, bounds, input_image, doc_ind):
+        df = pd.DataFrame()
 
-    for i, row in df.iterrows():
+        for b in bounds:
+            df = df.append({'bbox': b[0], 'text': b[1]}, ignore_index=True)
 
-        p0, p1, p2, p3 = row['bbox']
+        image = np.array(input_image)
 
-        draw.line([*p0, *p1, *p2, *p3, *p0], fill=colors[row['class']], width=width)
+        cuda0 = torch.device('cuda:0')
 
-    return pil_image
+        image = cv2.resize(image, (1024, 1024))
 
+        image = image.astype(np.float32) / 255
 
-def recognize_key_value_fields(bounds, image_path, classification_model_path):
-    IMAGE_PATH = image_path
-    CLASSIFICATION_MODEL_PATH = classification_model_path
+        image = torch.tensor(image).to(device=cuda0).permute(2, 0, 1)
 
-    df = pd.DataFrame()
+        image = torch.unsqueeze(image, 0)
 
-    for b in bounds:
-        df = df.append({'bbox': b[0], 'text': b[1]}, ignore_index=True)
+        output = self.model(image).cpu().squeeze()
 
+        output = output.permute(1, 2, 0)
 
-    image = cv2.imread(IMAGE_PATH)
+        output = output.detach().numpy()
 
-    IMAGE_SHAPE = image.shape[:2]
+        image = np.array(input_image)
 
-    model = torch.load(CLASSIFICATION_MODEL_PATH, map_location='cuda:0')
+        image = cv2.resize(image, (image.shape[1] * 2, image.shape[0] * 2))
 
-    cuda0 = torch.device('cuda:0')
+        IMAGE_SHAPE = image.shape[:2]
 
-    input_image = cv2.resize(image, (1024, 1024))
-
-    input_image = input_image.astype(np.float32) / 255
-
-    input = torch.tensor(input_image).to(device=cuda0).permute(2, 0, 1)
-
-    input = torch.unsqueeze(input, 0)
-
-    output = model(input).cpu().squeeze()
-
-    output = output.permute(1, 2, 0)
-
-    output = output.detach().numpy()
-
-
-
-    image = cv2.imread(IMAGE_PATH)
-
-    image = cv2.resize(image, (image.shape[1] * 2, image.shape[0] * 2))
-
-    IMAGE_SHAPE = image.shape[:2]
-
-    class_arr = []
-
-    for i, row in df.iterrows():
-
-        y_v_box, x_v_box = get_min_rect(row['bbox'])
-
-        values = np.zeros((output.shape[2]))
-
-        for i in range(output.shape[2]):
-
-            ch = output[:, :, i].copy()
-
-            x_v = (np.array(x_v_box) / IMAGE_SHAPE[1]) * 1024
-
-            y_v = (np.array(y_v_box) / IMAGE_SHAPE[0]) * 1024
-
-            ch = ch[int(y_v[0]):int(y_v[1]), int(x_v[0]):int(x_v[1])]
-
-            ch[ch > 0.5] = 1
-            ch[ch <= 0.5] = 0
-
-
-            values[i] = np.sum(ch) / (ch.shape[0] * ch.shape[1])
-
-        ind = np.argmax(values)
-        
-        class_arr.append(ind)
-
-    df['class'] = class_arr
-
-
-
-    clModel = get_prediction.ClassificationModel()
-
-    im = Image.open(IMAGE_PATH)
-
-    ind = clModel.get_category(im)
-
-    document = list_of_documents[ind]
-
-
-    found_fields = dict()
-    for f in document.fields[4:]:
-
-        rus_name = f.rus_name
-
-        max_v = -1
+        class_arr = []
 
         for i, row in df.iterrows():
 
-            dist = fuzz.ratio(row['text'].lower(), rus_name.lower())
+            y_v_box, x_v_box = get_min_rect(row['bbox'])
 
-            if dist > max_v and row['class'] == 1:    
-                found_fields[f.name] = row
-                max_v = dist 
+            values = np.zeros((output.shape[2]))
 
+            for i in range(output.shape[2]):
+                ch = output[:, :, i].copy()
 
-    for key, field_row in found_fields.items():
+                x_v = (np.array(x_v_box) / IMAGE_SHAPE[1]) * 1024
 
-        points = field_row['bbox']
+                y_v = (np.array(y_v_box) / IMAGE_SHAPE[0]) * 1024
 
-        goal_c = get_center(points)
+                ch = ch[int(y_v[0]):int(y_v[1]), int(x_v[0]):int(x_v[1])]
 
-        min_dist = 10000
+                ch[ch > 0.5] = 1
+                ch[ch <= 0.5] = 0
 
-        for i, row in df.iterrows():
-            if row['class'] != 2:
-                continue
-            c = get_center(row['bbox'])
-            
-            dist = np.sqrt(np.sum(np.power(c - goal_c, 2)))
+                values[i] = np.sum(ch) / (ch.shape[0] * ch.shape[1])
 
-            y_field_value = goal_c[1]
-            y_value = c[1]
+            ind = np.argmax(values)
 
-            if dist < min_dist and np.abs(y_field_value - y_value) < 10:
-                min_dist = dist
-                field_row['value'] = row['text']                
+            class_arr.append(ind)
 
-    return found_fields
+        df['class'] = class_arr
+
+        document = list_of_documents[doc_ind]
+
+        found_fields = dict()
+        for f in document.fields[4:]:
+
+            rus_name = f.rus_name
+
+            max_v = -1
+
+            for i, row in df.iterrows():
+
+                dist = fuzz.ratio(row['text'].lower(), rus_name.lower())
+
+                if dist > max_v and row['class'] == 1:
+                    found_fields[f.name] = row
+                    max_v = dist
+
+        for key, field_row in found_fields.items():
+
+            points = field_row['bbox']
+
+            goal_c = get_center(points)
+
+            min_dist = 10000
+
+            for i, row in df.iterrows():
+                if row['class'] != 2:
+                    continue
+                c = get_center(row['bbox'])
+
+                dist = np.sqrt(np.sum(np.power(c - goal_c, 2)))
+
+                y_field_value = goal_c[1]
+                y_value = c[1]
+
+                if dist < min_dist and np.abs(y_field_value - y_value) < 10:
+                    min_dist = dist
+                    field_row['value'] = row['text']
+
+        return found_fields

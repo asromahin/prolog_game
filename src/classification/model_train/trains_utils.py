@@ -1,9 +1,8 @@
 import typing as tp
 
+from config import Config
 from torch import nn
 from trains import Logger, Task
-
-from src.classification.model_train.config import Config
 
 
 def get_task_and_logger_from_config(config: Config) -> tp.Tuple[Logger, Task]:
@@ -33,9 +32,10 @@ def pd_tabl(dict_value):
         return [dict_value[x][key].n for x in dict_value.keys()]
 
     df = pd.DataFrame({'Документ': [x for x in dict_value.keys()],
-                       'clf_document': mean_to_key(dict_value, 'clf_document'),
-                       'Fscore': mean_to_key(dict_value, 'Fscore'),
-                        'quantity': quantity_to_key(dict_value, 'clf_document'),
+                       'acc_document': mean_to_key(dict_value, 'acc_document'),
+                       'acc_titul': mean_to_key(dict_value, 'acc_titul'),
+                       'Fscore_doc': mean_to_key(dict_value, 'Fscore'),
+                        'quantity': quantity_to_key(dict_value, 'acc_document'),
                        })
 
-    return df.dropna()
+    return df

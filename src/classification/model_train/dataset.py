@@ -26,6 +26,7 @@ class DocumentDatasetAddClsBig:
         sample = self.df.iloc[idx]
         #im_path, ann_path = sample['image'], sample['annotation']
         im_path = sample['full_path']
+        titul = sample['titul']
         cls_target = DOCNAME2CLASS[sample['class']]
 
         filename = sample['filename']
@@ -47,12 +48,10 @@ class DocumentDatasetAddClsBig:
         image = self.augmentation(image)
         #image = np.transpose(image, (2, 0, 1)).astype(np.float32)
         y_oh = np.zeros(len(DOCNAME2CLASS))
-
-        #if cls_target in (-1, -2, -3):
-            #y_oh[-1] = 1
-            #return image, torch.FloatTensor(y_oh)
+        titul_oh = np.zeros(2)
+        titul_oh[titul] = 1
         y_oh[cls_target] = 1
-        return image, torch.FloatTensor(y_oh), filename
+        return image, torch.FloatTensor(y_oh), filename, titul_oh
 
     def __len__(self):
         return len(self.df)

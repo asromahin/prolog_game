@@ -39,7 +39,7 @@ def train_qat(config: Config, train_dataset, valid_dataset, test_dataset, logger
         verbose=True
     )
 
-    test_tabl = smp.TestEpochCustom(
+    test_tabl = smp.ValidEpochCustomTabl(
         model=model,
         loss=config.loss,
         metrics=config.metrics,
@@ -62,14 +62,14 @@ def train_qat(config: Config, train_dataset, valid_dataset, test_dataset, logger
         test_metrics, dict_test = test_tabl.run(test_loader)
         logger.report_table("test csv", "remote csv", iteration=0, table_plot=pd_tabl(dict_test))
 
-        if val_metrics['clf_document'] > qat_score:
-            torch.save(model, os.path.join(qat_models_path, f'{epoch}_{val_metrics["clf_document"]:.4f}.pt'))
-            qat_score = val_metrics['clf_document']
-            best_model_path = f'{epoch}_{val_metrics["clf_document"]:.4f}.pt'
+        if val_metrics['acc_document'] > qat_score:
+            torch.save(model, os.path.join(qat_models_path, f'{epoch}_{val_metrics["acc_document"]:.4f}.pt'))
+            qat_score = val_metrics['acc_document']
+            best_model_path = f'{epoch}_{val_metrics["acc_document"]:.4f}.pt'
 
 
-        scheduler.step(val_metrics['clf_document'])
-        #write2log(os.path.join(experiment_path, logname_quant), epoch, val_metrics['clf_document'])
+        scheduler.step(val_metrics['acc_document'])
+        #write2log(os.path.join(experiment_path, logname_quant), epoch, val_metrics['acc_document'])
 
         val_metrics['lr'] = optimizer.param_groups[0]['lr']
         push_logs('train', logger, epoch, train_metrics, config)

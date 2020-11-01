@@ -1,13 +1,13 @@
-import numpy as np
-import cv2
-import random
-import torch
 import os
-from shutil import copyfile
-from contextlib import suppress
+import random
 import sys
 import typing as tp
-import random
+from shutil import copyfile
+
+import cv2
+import numpy as np
+import torch
+
 
 def make_os_settings(cuda_num: str) -> None:
     """Set some os settings."""
@@ -59,7 +59,7 @@ def write2log(logpath: str, epoch: int, accuracy_1) -> None:
         log.write(add2log)
 
 def push_logs(name, logger, epoch, metrics, config):
-    list_log = ['iou', 'iou_dots', 'clf_document', 'clf_quality', 'lr','Fscore', config.loss.__name__]
+    list_log = ['iou', 'iou_dots', 'acc_document', 'clf_quality', 'lr','Fscore','acc_titul', config.loss.__name__]
     for log_name in list_log:
         try:
             logger.report_scalar(log_name, name, iteration=epoch, value=metrics[log_name])
