@@ -125,4 +125,9 @@ class KeyRecognize:
                     min_dist = dist
                     field_row['value'] = row['text']
 
-        return found_fields
+            new_found = []
+            for f in found_fields:
+                if f.get('value') is not None:
+                    new_found.append(f)
+
+        return new_found

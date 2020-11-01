@@ -8,6 +8,14 @@ import os
 
 #GLOBAL_QUERY = None
 
+def dict_to_str(d):
+  res_str = ''
+  for k in d.keys():
+    res_str += f'{k}: {str(d[k])}\n\n'
+  return res_str
+
+
+
 def init_app(pipeline,  template_folder='prolog_game', global_text='тип документа'):
   app = Flask(__name__, template_folder=template_folder)
 
@@ -31,7 +39,7 @@ def init_app(pipeline,  template_folder='prolog_game', global_text='тип до�
         nim = Image.open(path)
         nim = nim.convert('RGB')
         result = pipeline.predict(nim, query=g_text)
-        return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0])
+        return render_template('index.html', uploaded_img_name=filename, result=dict_to_str(result))
       else:
         return render_template('index.html', uploaded_img_name=None, result=None)
 
