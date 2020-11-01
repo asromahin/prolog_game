@@ -8,7 +8,8 @@ app.config['SECRET_KEY'] = 'kj'
 
 GLOBAL_QUERY = 'название документа'
 
-@app.route('/',methods = ['GET','POST'])
+
+@app.route('/',methods = ['GET', 'POST'])
 def index():
   if request.method == 'POST':
     img = request.files.get('img')

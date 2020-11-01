@@ -25,8 +25,8 @@ class Pipeline:
 
     def predict(self, image):
         res = ResultPipeline()
-        res['type'] = self.classification(image)
-        res['bounds'] = self.recognize(np.array(image))
+        res['type'] = self.classification.predict(image)
+        res['bounds'] = self.recognize.predict(np.array(image))
         res['full_text'] = extract_all_text(res['bounds'])
         res['ner_result'] = self.ner(res['full_text'])
         return res

@@ -21,7 +21,7 @@ class ClassificationModel:
         predicted_idx = int(category)
         return predicted_idx
 
-    def get_prediction(self,  image):
+    def predict(self,  image):
         image_with_tags = {0: 'БТИ', 1: 'ЗУ', 2: 'Разр. на ввод', 3: 'Разр. на стр-во', 4: 'Свид. АГР'}
         idx = self.get_category(image=image)
         tag_image = image_with_tags[idx]
