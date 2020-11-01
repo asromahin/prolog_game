@@ -3,7 +3,7 @@ import typing as tp
 from torch import nn
 from trains import Logger, Task
 
-from config import Config
+from src.classification.model_train.config import Config
 
 
 def get_task_and_logger_from_config(config: Config) -> tp.Tuple[Logger, Task]:
