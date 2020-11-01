@@ -1,5 +1,6 @@
 import torchvision.transforms as transforms
 import torch
+from src.classification.model_train import mobimet_v2
 
 
 class ClassificationModel:
