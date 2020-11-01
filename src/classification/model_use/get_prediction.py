@@ -3,7 +3,7 @@ import torch
 
 
 class ClassificationModel:
-    def __init__(self, model_path='../model_pt/mobilenet_v2_0.9873.pt'):
+    def __init__(self, model_path='src/classification/model_pt/mobilenet_v2_0.9873.pt'):
         self.model = torch.load(model_path).to('cpu')
 
     def transform_image(self, image):
