@@ -26,10 +26,10 @@ class Pipeline:
         self.recognize = RecognizePipeline(credential_path)
         self.ner = DeepPavlovPipeline()
 
-    def predict(self, image):
+    def predict(self, image, query='тип документа'):
         res = ResultPipeline()
         res['type'] = self.classification.predict(image)
         res['bounds'] = self.recognize.predict(np.array(image))
         res['full_text'] = extract_all_text(res['bounds'])
-        res['ner_result'] = self.ner.predict(res['full_text'])
+        res['ner_result'] = self.ner.predict(res['full_text'], query)
         return res
