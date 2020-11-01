@@ -24,6 +24,19 @@ def get_center(points):
 
     return np.array([c_x, c_y])
 
+def draw_bounds(image, df, colors, width=2):
+
+    pil_image = Image.fromarray(image)
+
+    draw = ImageDraw.Draw(pil_image)
+
+    for i, row in df.iterrows():
+
+        p0, p1, p2, p3 = row['bbox']
+
+        draw.line([*p0, *p1, *p2, *p3, *p0], fill=colors[row['class']], width=width)
+
+    return pil_image
 
 
 def recognize_key_value_fields(bounds, image_path, classification_model_path):
@@ -91,9 +104,6 @@ def recognize_key_value_fields(bounds, image_path, classification_model_path):
             values[i] = np.sum(ch) / (ch.shape[0] * ch.shape[1])
 
         ind = np.argmax(values)
-
-        if max(values) < 0.01:
-            ind = 5
         
         class_arr.append(ind)
 
