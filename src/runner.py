@@ -29,6 +29,7 @@ def init_app(pipeline, template_folder='prolog_game'):
         path = filename
         img.save(path)
         nim = Image.open(path)
+        nim = nim.convert('RGB')
         result = pipeline.predict(nim, query='тип документа')
         return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=None)
       else:
