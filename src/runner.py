@@ -29,12 +29,12 @@ def init_app(cls_model_path, credential_path):
         img.save(path)
         nim = Image.open(path)
         result = pipeline.predict(nim, query=GLOBAL_QUERY)
-        return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'], global_query=GLOBAL_QUERY)
+        return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=GLOBAL_QUERY)
       else:
         return render_template('index.html', uploaded_img_name=None, result=None, global_query=GLOBAL_QUERY)
 
     elif request.method == 'GET':
-      return render_template('index.html', uploaded_img_name=None, result=None, global_query=GLOBAL_QUERY)
+      return render_template('index.html', uploaded_img_name=None, result=None, global_query=None)
 
 
   @app.route('/images/<filename>',methods = ['GET'])
