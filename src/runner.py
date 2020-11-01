@@ -6,6 +6,8 @@ from flask import render_template, send_file
 from PIL import Image
 import os
 
+GLOBAL_QUERY = 'название документа'
+
 def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
   app = Flask(__name__, template_folder=template_folder)
 
@@ -13,7 +15,6 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
 
   pipeline = Pipeline(cls_model_path=cls_model_path, credential_path=credential_path)
 
-  GLOBAL_QUERY = 'название документа'
   @app.route('/',methods = ['GET', 'POST'])
   def index():
     global GLOBAL_QUERY
@@ -30,6 +31,7 @@ def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
         path = filename
         img.save(path)
         nim = Image.open(path)
+        global pipeline
         result = pipeline.predict(nim, query=GLOBAL_QUERY)
         return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=GLOBAL_QUERY)
       else:
