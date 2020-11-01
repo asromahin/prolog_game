@@ -15,12 +15,13 @@ def init_app(cls_model_path, credential_path):
   GLOBAL_QUERY = 'название документа'
   @app.route('/',methods = ['GET', 'POST'])
   def index():
+    global GLOBAL_QUERY
     if request.method == 'POST':
       img = request.files.get('img')
       text = request.form.get('text')
       print(text)
       if text is not None:
-        global GLOBAL_QUERY
+
         GLOBAL_QUERY = text
       if img is not None:
         filename = img.filename
