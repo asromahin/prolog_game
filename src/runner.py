@@ -26,6 +26,7 @@ def init_app(pipeline, template_folder='prolog_game'):
       if img is not None:
         #global GLOBAL_QUERY
         filename = img.filename
+        filename = os.path.join('/content/prolog_game/src', filename)
         print(filename)
         path = filename
         img.save(path)
@@ -43,6 +44,7 @@ def init_app(pipeline, template_folder='prolog_game'):
   def images(filename):
     print('send here')
     print(filename)
+    filename = os.path.join('/content/prolog_game/src', filename)
     return send_file(filename)
   run_with_ngrok(app)   #starts ngrok when the app is run
   app.run()
