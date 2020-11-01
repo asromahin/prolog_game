@@ -6,9 +6,11 @@ from flask import render_template, send_file
 from PIL import Image
 import os
 
-GLOBAL_QUERY = 'название документа'
+GLOBAL_QUERY = None
 
 def init_app(cls_model_path, credential_path, template_folder='prolog_game'):
+  global GLOBAL_QUERY
+  GLOBAL_QUERY = 'название документа'
   app = Flask(__name__, template_folder=template_folder)
 
   app.config['SECRET_KEY'] = 'kj'
