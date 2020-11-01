@@ -38,9 +38,6 @@ class PageRecognizer(object):
 
                 crop = image[x_v[0]:x_v[1], y_v[0]:y_v[1]]
 
-                # plt.figure()
-                # plt.imshow(crop)
-                # print(bound)
                 bound[1] = self.ocr_model.recognize(crop)
                 bounds[i] = bound
 
@@ -106,7 +103,6 @@ class RecognizePipeline:
         self.reader = easyocr.Reader(['ru', 'ru'])
         self.ocr_model = OcrModel(self.client)
         self.rec = Recognizer(self.reader, {'paragraph': False})
-
 
     def image_preprocess(self, image):
         image = cv2.resize(image, (image.shape[1] * 2, image.shape[0] * 2))
