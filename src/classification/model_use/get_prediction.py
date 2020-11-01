@@ -32,9 +32,9 @@ class ClassificationModel:
             4: 'Свидетельство об утверждении архитектурно-градостроительного решения'
         }
         titul_with_tags = {0: 'no_titul', 1: 'titul'}
-        #idx, titul_idx = self.get_category(image=image)
+        idx, titul_idx = self.get_category(image=image)
         idx = self.get_category(image=image)
         tag_image = image_with_tags[idx]
-        #tag_titul_image = titul_with_tags[titul_idx]
-        return tag_image#, tag_titul_image
+        tag_titul_image = titul_with_tags[titul_idx]
+        return tag_image, tag_titul_image
 

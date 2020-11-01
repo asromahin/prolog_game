@@ -85,7 +85,7 @@ class KeyRecognize:
         df['class'] = class_arr
 
         for l in list_of_documents:
-            if l.rus_name==doc_type:
+            if l.rus_name == doc_type:
                 document = l
 
         found_fields = dict()
@@ -100,7 +100,7 @@ class KeyRecognize:
                 dist = fuzz.ratio(row['text'].lower(), rus_name.lower())
 
                 if dist > max_v and row['class'] == 1:
-                    found_fields[f.name] = row
+                    found_fields[f.rus_name] = row
                     max_v = dist
 
         for key, field_row in found_fields.items():
