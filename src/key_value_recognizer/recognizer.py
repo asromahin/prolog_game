@@ -126,8 +126,8 @@ class KeyRecognize:
                     field_row['value'] = row['text']
 
             new_found = []
-            for f in found_fields:
-                if f.get('value') is not None:
-                    new_found.append(f)
+            for k in found_fields.keys():
+                if found_fields[k].get('value') is not None:
+                    new_found.append(found_fields[k])
 
         return new_found
