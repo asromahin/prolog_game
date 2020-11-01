@@ -7,7 +7,7 @@ class ClassificationModel:
         self.model = torch.load(model_path).to('cpu')
 
     def transform_image(self, image):
-        my_transforms = transforms.Compose([transforms.Resize(512),
+        my_transforms = transforms.Compose([transforms.Resize(512, 512),
                                             transforms.ToTensor(),
                                             ])
         return my_transforms(image).unsqueeze(0)
