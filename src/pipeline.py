@@ -3,15 +3,18 @@ from src.recognizer.recognizer import RecognizePipeline
 from src.ner.ner import DeepPavlovPipeline
 import numpy as np
 
+
 def extract_all_text(bounds):
   res_text = ''
   for b in bounds:
     res_text = ' '.join([res_text, b[1]])
   return res_text
 
+
 class ResultPipeline(dict):
     def __init__(self):
         super(ResultPipeline, self).__init__()
+
 
 class Pipeline:
     def __init__(

@@ -108,7 +108,7 @@ class RecognizePipeline:
         image = cv2.resize(image, (image.shape[1] * 2, image.shape[0] * 2))
         return image
 
-    def recognize(self, image):
+    def predict(self, image):
       image = self.image_preprocess(image)
       bounds = PageRecognizer(recognizer=self.rec, ocr_model=self.ocr_model, preprocess=self.image_preprocess).recognize(image)
       return bounds
