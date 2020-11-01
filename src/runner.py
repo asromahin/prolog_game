@@ -16,11 +16,12 @@ def init_app(pipeline,  template_folder='prolog_game', global_text='тип до�
   @app.route('/', methods=['GET', 'POST'])
   def index():
     if request.method == 'POST':
+      g_text = global_text
       img = request.files.get('img')
       text = request.form.get('text')
       print(text)
       if text is not None:
-        global_text = text
+        g_text = text
       if img is not None:
         filename = img.filename
         print(filename)
@@ -28,7 +29,7 @@ def init_app(pipeline,  template_folder='prolog_game', global_text='тип до�
         img.save(path)
         nim = Image.open(path)
         nim = nim.convert('RGB')
-        result = pipeline.predict(nim, query=global_text)
+        result = pipeline.predict(nim, query=g_text)
         return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0])
       else:
         return render_template('index.html', uploaded_img_name=None, result=None)
