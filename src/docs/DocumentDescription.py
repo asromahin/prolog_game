@@ -46,7 +46,7 @@ list_of_documents = [
             ),
             DocumentField(
                 name='address',
-                rus_name='Адресс',
+                rus_name='Адрес',
             ),
             DocumentField(
                 name='name_obj',
@@ -180,4 +180,291 @@ list_of_documents = [
             ),
         ]
     ),
+DocumentDescription(
+        name='town_planning_conclusion',
+        rus_name='Градостроительное заключение',
+        fields=[
+            DocumentField(
+                name='doc_date',
+                rus_name='Дата документа',
+            ),
+            DocumentField(
+                name='doc_number',
+                rus_name='Номер документа',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='land_area',
+                rus_name='Площадь участка',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='completed_object_acceptance',
+        rus_name='Акт государственной приемочной комиссии о приемке в эксплуатацию законченного строительством объекта',
+        fields=[
+            DocumentField(
+                name='doc_date',
+                rus_name='Дата документа',
+            ),
+            DocumentField(
+                name='doc_number',
+                rus_name='Номер документа',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='land_area',
+                rus_name='Площадь участка (по проекту и фактически)',
+            ),
+            DocumentField(
+                name='work_type',
+                rus_name='Тип работ',
+            ),
+            DocumentField(
+                name='work_indicators',
+                rus_name='Показатели работ (по проекту и фактически)',
+            ),
+            DocumentField(
+                name='storeys_number',
+                rus_name='Этажность (по проекту и фактически)',
+            ),
+            DocumentField(
+                name='sections_number',
+                rus_name='Количество секций (по проекту и фактически)',
+            ),
+            DocumentField(
+                name='construction_volume',
+                rus_name='Строительный объем (по проекту и фактически)',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='floor_plan_legend',
+        rus_name='Экспликация к архивному поэтажному плану',
+        fields=[
+            DocumentField(
+                name='storey',
+                rus_name='Этаж',
+            ),
+            DocumentField(
+                name='doc_number',
+                rus_name='Номер документа',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='land_area',
+                rus_name='Площадь участка',
+            ),
+            DocumentField(
+                name='premises',
+                rus_name='Помещение',
+            ),
+            DocumentField(
+                name='total_floor_area',
+                rus_name='Общая площадь этажа',
+            ),
+            DocumentField(
+                name='total_building_area',
+                rus_name='Общая площадь здания',
+            ),
+            DocumentField(
+                name='altitude',
+                rus_name='Высотность',
+            ),
+            DocumentField(
+                name='plan_date',
+                rus_name='Дата составления плана',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='building_permit',
+        rus_name='Разрешение на строительство',
+        fields=[
+            DocumentField(
+                name='height',
+                rus_name='Высота',
+            ),
+            DocumentField(
+                name='building_address',
+                rus_name='Строительный адрес',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='total_area',
+                rus_name='Общая площадь',
+            ),
+            DocumentField(
+                name='doc_validity',
+                rus_name='Срок действия документа',
+            ),
+            DocumentField(
+                name='work_indicators',
+                rus_name='Показатели работ (по проекту и фактически)',
+            ),
+            DocumentField(
+                name='storeys_number',
+                rus_name='Количество этажей',
+            ),
+            DocumentField(
+                name='underground_storeys_number',
+                rus_name='Подземные этажи',
+            ),
+            DocumentField(
+                name='volume',
+                rus_name='Объем',
+            ),
+            DocumentField(
+                name='built_up_area',
+                rus_name='Площадь застройки',
+            ),
+            DocumentField(
+                name='land_area',
+                rus_name='Площадь участка',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='permit_for_construction_works',
+        rus_name='Разрешение на производство строительно-монтажных работ',
+        fields=[
+            DocumentField(
+                name='administrative_district',
+                rus_name='Административный округ',
+            ),
+            DocumentField(
+                name='moscow_distict',
+                rus_name='Район города Москвы',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='build_type',
+                rus_name='Вид строительства',
+            ),
+            DocumentField(
+                name='doc_validity',
+                rus_name='Срок действия документа',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='prefect_order',
+        rus_name='Распоряжение префекта',
+        fields=[
+            DocumentField(
+                name='doc_date',
+                rus_name='Дата документа',
+            ),
+            DocumentField(
+                name='doc_number',
+                rus_name='Номер документа',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='land_area',
+                rus_name='Площадь участка',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='permit_for_preparatory_basic_construction_works',
+        rus_name='Разрешение на производство подготовительных и основных строительно-монтажных работ',
+        fields=[
+            DocumentField(
+                name='administrative_district',
+                rus_name='Административный округ',
+            ),
+            DocumentField(
+                name='moscow_district',
+                rus_name='Район города Москвы',
+            ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='build_type',
+                rus_name='Вид строительства',
+            ),
+            DocumentField(
+                name='doc_validity',
+                rus_name='Срок действия документа',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='lease_contract',
+        rus_name='Договор аренды земного участка',
+         fields=[
+            DocumentField(
+                name='doc_date',
+                rus_name='Дата документа',
+             ),
+            DocumentField(
+                name='doc_number',
+                rus_name='Номер документа',
+                ),
+            DocumentField(
+                name='doc_validity',
+                rus_name='Срок действия документа',
+            ),
+        ]
+    ),
+DocumentDescription(
+        name='tech_passport',
+        rus_name='Технический паспорт',
+         fields=[
+            DocumentField(
+                name='purpose_object',
+                rus_name='Назначение объекта',
+             ),
+            DocumentField(
+                name='address',
+                rus_name='Адрес',
+            ),
+            DocumentField(
+                name='owner',
+                rus_name='Владелец',
+            ),
+             DocumentField(
+                 name='year',
+                 rus_name='Год постройки',
+             ),
+             DocumentField(
+                 name='floor',
+                 rus_name='Этаж',
+             ),
+             DocumentField(
+                 name='roof_area',
+                 rus_name='Площадь крыши',
+             ),
+             DocumentField(
+                 name='volume',
+                 rus_name='Объем',
+             ),
+             DocumentField(
+                 name='total_area',
+                 rus_name='Общая площадь',
+             ),
+        ]
+    ),
+
 ]
