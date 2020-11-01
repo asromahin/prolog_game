@@ -41,6 +41,7 @@ def init_app(pipeline, template_folder='prolog_game'):
   @app.route('/images/<filename>', methods=['GET'])
   def images(filename):
     print('send here')
+    print(filename)
     return send_file(filename)
   run_with_ngrok(app)   #starts ngrok when the app is run
   app.run()
