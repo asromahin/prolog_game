@@ -13,6 +13,7 @@ def init_app(pipeline,  template_folder='prolog_game', global_text='тип до�
 
   app.config['SECRET_KEY'] = 'kj'
 
+
   @app.route('/', methods=['GET', 'POST'])
   def index():
     if request.method == 'POST':
