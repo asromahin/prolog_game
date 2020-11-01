@@ -15,7 +15,6 @@ def init_app(pipeline,  template_folder='prolog_game', global_text='тип до�
 
   @app.route('/', methods=['GET', 'POST'])
   def index():
-    global global_text
     if request.method == 'POST':
       img = request.files.get('img')
       text = request.form.get('text')
