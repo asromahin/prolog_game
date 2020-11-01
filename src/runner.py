@@ -7,7 +7,7 @@ from PIL import Image
 import os
 
 def init_app(cls_model_path, credential_path, project_name='prolog_game'):
-  template_folder = os.path.join(project_name, 'src', 'templates')
+  template_folder = os.path.join(project_name, 'templates')
   app = Flask(__name__, template_folder=template_folder)
 
   app.config['SECRET_KEY'] = 'kj'
