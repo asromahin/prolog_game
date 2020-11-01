@@ -10,5 +10,8 @@ pip install -r requirements.txt
 
 
 
+Поиск по базе данных: (в работе...)
+
+![alt text](img.png)
 
 
