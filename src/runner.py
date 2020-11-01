@@ -8,36 +8,34 @@ import os
 
 #GLOBAL_QUERY = None
 
-def init_app(pipeline, template_folder='prolog_game'):
+def init_app(pipeline,  template_folder='prolog_game', global_text='тип документа'):
   app = Flask(__name__, template_folder=template_folder)
 
   app.config['SECRET_KEY'] = 'kj'
 
   @app.route('/', methods=['GET', 'POST'])
   def index():
-    #global GLOBAL_QUERY
+    global global_text
     if request.method == 'POST':
       img = request.files.get('img')
       text = request.form.get('text')
       print(text)
-      #if text is not None:
-        #global GLOBAL_QUERY
-        #GLOBAL_QUERY = text
+      if text is not None:
+        global_text = text
       if img is not None:
-        #global GLOBAL_QUERY
         filename = img.filename
         print(filename)
         path = filename
         img.save(path)
         nim = Image.open(path)
         nim = nim.convert('RGB')
-        result = pipeline.predict(nim, query='тип документа')
-        return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0], global_query=None)
+        result = pipeline.predict(nim, query=global_text)
+        return render_template('index.html', uploaded_img_name=filename, result=result['ner_result'][0][0])
       else:
-        return render_template('index.html', uploaded_img_name=None, result=None, global_query=None)
+        return render_template('index.html', uploaded_img_name=None, result=None)
 
     elif request.method == 'GET':
-      return render_template('index.html', uploaded_img_name=None, result=None, global_query=None)
+      return render_template('index.html', uploaded_img_name=None, result=None)
 
   @app.route('/images/<filename>', methods=['GET'])
   def images(filename):
