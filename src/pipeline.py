@@ -31,5 +31,5 @@ class Pipeline:
         res['type'] = self.classification.predict(image)
         res['bounds'] = self.recognize.predict(np.array(image))
         res['full_text'] = extract_all_text(res['bounds'])
-        res['ner_result'] = self.ner(res['full_text'])
+        res['ner_result'] = self.ner.predict(res['full_text'])
         return res
