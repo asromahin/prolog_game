@@ -38,8 +38,7 @@ def init_app(pipeline, template_folder='prolog_game'):
     elif request.method == 'GET':
       return render_template('index.html', uploaded_img_name=None, result=None, global_query=None)
 
-
-  @app.route('/images/<filename>',methods = ['GET'])
+  @app.route('/images/<filename>', methods=['GET'])
   def images(filename):
     print('send here')
     return send_file(filename)
