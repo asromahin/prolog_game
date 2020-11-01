@@ -19,8 +19,8 @@ class Pipeline:
             cls_model_path=None,
             credential_path=None,
     ):
-        self.classification = ClassificationModel()
-        self.recognize = RecognizePipeline()
+        self.classification = ClassificationModel(cls_model_path)
+        self.recognize = RecognizePipeline(credential_path)
         self.ner = DeepPavlovPipeline()
 
     def predict(self, image):
