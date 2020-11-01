@@ -14,14 +14,14 @@ class ClassificationModel:
 
     def get_category(self, image):
         transformed_image = self.transform_image(image=image)
-        #outputs, out_titul = self.model.forward(transformed_image)
-        outputs = self.model.forward(transformed_image)
+        outputs, out_titul = self.model.forward(transformed_image)
+        #outputs = self.model.forward(transformed_image)
         category = torch.argmax(outputs).item()
-        #category_titul = torch.argmax(out_titul).item()
+        category_titul = torch.argmax(out_titul).item()
 
         predicted_idx = int(category)
-        #predicted_titul_idx = int(category_titul)
-        return predicted_idx#, predicted_titul_idx
+        predicted_titul_idx = int(category_titul)
+        return predicted_idx, predicted_titul_idx
 
     def predict(self,  image):
         image_with_tags = {
